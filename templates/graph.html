@@ -1,0 +1,283 @@
+
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>graph display</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.3/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <style>
+            svg {
+                height: 1000;
+                width: 2000;
+
+            }
+    
+            .link {
+                stroke: #aaa;
+
+            }
+    
+            .node text {
+                /* stroke: #333; */
+                cursos: pointer;
+                margin-top: 400px;
+            }
+    
+            .node circle {
+                /* stroke: #fff; */
+                stroke-width: 3px;
+                /* fill: #555; */
+            }
+            .custom-range{
+                width: 25 !important;
+                
+            }
+            .graph{
+                left: 58%;
+                top: 50%;
+                position: absolute;
+                transform: translate(-50%, -50%);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="row">
+            
+            <i class="fa fa-arrow-circle-o-left" aria-hidden="true" onclick="goBack()" style="padding-left: 50px; padding-top: 20px; color: #CDD9FF; font-size:48px"></i>
+
+            <!-- <a href=""  text-decoration: none;"><h2 style="padding-left: 50px;" onclick="goBack()">Back</h2></a> -->
+        </div>
+        <div class="container">
+            
+            <!-- <div class="row" style="margin-bottom: 16px; padding-left: 50px; align: center;">
+                <form action="" method="post"> -->
+                
+                    <!-- <label for="number">subgraph level </label>   -->
+                    <!-- <input id="my-input" type="text" name='number' width="30px" required><br> -->
+                    <!-- <div class="d-flex justify-content-center my-4" >
+                        <div class="w-50">
+                          <input type="range" name ="number" class="custom-range" id="customRange11" min="0" max="15" value="1" width="30px" required> 
+                        </div>
+                        <span class="font-weight-bold text-primary ml-2 valueSpan2"></span>
+                    </div> -->
+                
+                
+                
+                    <!-- <button type="submit" value="search" id="submit">Search</button> -->
+                <!-- </form>
+                
+            </div> -->
+            <div class="row graph">
+            
+                    <div class="viz">
+                    
+                    </div>
+                
+                
+                
+                
+            </div>
+        </div>
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <!-- Bootstrap JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://d3js.org/d3.v3.min.js"></script>
+        <script>
+            $(document).ready(function() {
+
+                const $valueSpan = $('.valueSpan2');
+                const $value = $('#customRange11');
+                $valueSpan.html($value.val());
+                $value.on('input change', () => {
+                
+                  $valueSpan.html($value.val());
+                });
+                });
+            var colors = d3.scale.category10();
+            // console.log(colors)
+            var json= {% if filtered_result is defined %}{{ filtered_result|tojson }} {% endif %};
+            // console.log(json)
+            var width = 2000,
+                height = 1000
+            // console.log(data.nodes)
+            var svg = d3.select(".viz").append("svg")
+                .attr("width", width)
+                .attr("height", height);
+    
+            var force = d3.layout.force()
+                .gravity(.05)
+                .distance(200)
+                .charge(-100)
+                .size([width, height]);
+            // console.log(force);
+                json.forEach((data)=>{
+                    var edges_u = [];
+                    console.log(data.nodes)
+                    data.links.forEach(function(e) { 
+                        // console.log(e.source)
+                        // Get the source and target nodes
+                        // console.log(e)
+                        var sourceNode = data.nodes.filter(function(n) { return n.index === e.source; })[0],
+                            targetNode = data.nodes.filter(function(n) { return n.index === e.target; })[0];
+                            // console.log(sourceNode)
+                        // Add the edge to the array
+                        edges_u.push({source: sourceNode, target: targetNode});
+
+                        
+                });
+                    edges = []
+                    // console.log(edges_u)
+                    edges_u.forEach(edge =>{
+                        if (edge.target !== undefined){
+                            edges.push(edge)
+
+                    }
+
+                    });
+                    // console.log(edges)
+                    force.nodes(data.nodes).links(edges).start();
+                    var link = svg.selectAll(".link")
+                        .data(edges)
+                        .enter().append("line")
+                        .attr("class", "link")
+                        .style("stroke-width", function(d) { return Math.sqrt(d.weight); })
+                        var node = svg.selectAll(".node")
+                        .data(data.nodes)
+                        .enter().append("g")
+                        .attr("class", "node")
+                        .style("fill",function(d){return colors(d.category);})
+                        .call(force.drag);
+               
+                    node.append("circle")
+                        .attr("r", "12")
+                        ;
+                    
+                    node.append("text")
+                        .attr("dx", 12)
+                        .attr("dy", ".35em")
+                        .text(function (d) { return d.category });
+
+                    var size = 20
+                    console.log(data.nodes)
+                    svg.selectAll("mylabels")
+                    .data(colors.domain())
+                    .enter()
+                    .append("text")
+                      .attr("x", 100 + size*1.2)
+                      .attr("y", function(d,i){ return 100 + i*(size+5) + (size/2)}) // 100 is where the first dot appears. 25 is the distance between dots
+                      .style("fill", function(d){ return colors(d)})
+                      .text(function(d){ return d})
+                      .attr("text-anchor", "left")
+                      .style("alignment-baseline", "middle")
+
+
+                    svg.selectAll("mydots")
+                      .data(colors.domain())
+                      .enter()
+                      .append("rect")
+                        .attr("x", 100)
+                        .attr("y", function(d,i){ return 100 + i*(size+5)}) // 100 is where the first dot appears. 25 is the distance between dots
+                        .attr("width", size)
+                        .attr("height", size)
+                        .style("fill", function(d){ return colors(d)})
+
+
+                    var tooltip = d3.select(".viz")
+                    .append("div")
+                    .style("opacity", 0)
+                    .attr("class", "tooltip")
+                    .style("background-color", "white")
+                    .style("border", "solid")
+                    .style("border-width", "2px")
+                    .style("border-radius", "5px")
+                    .style("padding", "5px")
+
+                    //
+                    // Three function that change the tooltip when user hover / move / leave a cell
+                    var mouseover = function(d) {
+                      tooltip
+                        .style("opacity", 1)
+                      d3.select(this)
+                        .style("stroke", "black")
+                        .style("opacity", 1)
+                    }
+                    var mousemove = function(d) {
+                        console.log("X", event.pageX - 600)
+                        console.log("Y", event.pageY - 600)
+                      tooltip
+                        .html(d.text ||  d.author_name || d.author_institution)
+                        .style("left", (d3.mouse(this)[0]+700) + "px")
+                        .style("top", (d3.mouse(this)[1]+700) + "px")
+                    }
+                    var mouseleave = function(d) {
+                      tooltip
+                        .style("opacity", 0)
+                        .transition().duration(200)
+                      d3.select(this)
+                        .style("stroke", "none")
+                        .style("opacity", 0.8)
+                    }
+
+                    var mouseclick = function(d){
+                        tooltip
+                        .style("opacity", 1)
+                        .style("background-color", "green")
+                        .style("animation, true")
+                        .style("delay,  'show': 1000")
+
+                    }
+                    
+                    
+
+
+                    
+                    svg.selectAll("circle")
+                    .on("mouseover", mouseover )
+                    .on("mousemove", mousemove )
+                    .on("mouseleave", mouseleave )
+                    // .on('click', mouseclick)
+                    force.on("tick", function () {
+                        link.attr("x1", function (d) { return d.source.x; })
+                            .attr("y1", function (d) { return d.source.y; })
+                            .attr("x2", function (d) { return d.target.x; })
+                            .attr("y2", function (d) { return d.target.y; });
+                    
+                        node.attr("transform", function (d) { return "translate(" + d.x + "," + d.y + ")"; });
+                    });
+                })
+            
+                
+                function goBack() {
+                    window.history.back();
+                    }
+                
+                
+
+                    
+                
+    
+                
+                    
+                
+    
+    
+    
+    
+    
+    
+        </script>
+    </body>
+</html>

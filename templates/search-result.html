@@ -1,0 +1,537 @@
+
+<!DOCTYPE html>
+<html lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>result</title>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+        <!-- Bootstrap CSS -->
+        <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+        <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+        <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+        <!--[if lt IE 9]>
+            <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.3/html5shiv.js"></script>
+            <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+        <![endif]-->
+        <style>
+
+            .rectangle{
+
+                height: 90px;
+                left: 0px;
+                top: 0px;
+                background: #F1F5FF;
+            }
+            input[type="text"]{
+                /* margin-top: 16px; */
+                /* margin-left: 100px; */
+                display: flex;
+                flex-direction: column;
+                padding: 10px 20px;
+
+                position: absolute;
+                width: 530px;
+                height: 58px;
+                left: 100px;
+                top: 16px;
+
+                background: #FFFFFF;
+                border-radius: 6px;
+            }
+            .other-items{
+                margin-top: 20px;
+            }
+            .fact{
+                margin-top: 20px;
+                /* align: center; */
+                margin-left: 120px;
+                /* left: 50%; */
+            }
+            button{
+                margin-left: 5px;
+                margin-top: 5px;
+                background: #FFFFFF;
+                border-radius: 1000px;
+            }
+             button:hover{
+                background: #4B57D2;
+                color: #FFFFFF;
+            }
+            .button-items:hover{
+                background: #4B57D2;
+                color: #FFFFFF;
+            }
+            .facts{
+                border: 3px solid #CDD9FF;
+                box-sizing: border-box;
+                border-radius: 10px;
+                /* margin-top: 20px; */
+                top: 146px;
+                margin-left: -120px;
+                padding-bottom: 20px;
+                padding-top: 20px;
+            }
+            .other-item{
+                /* margin: 146px 16px; */
+                top:146px;
+                margin-left: 16px;
+
+            }
+            .other-items{
+                display: flex;
+                flex-direction: column;
+                /* padding: 30px 24px; */
+
+                position: static;
+                left: 0px;
+                /* top: 0px; */
+
+                /* P (Shade 9) */
+
+                background: #F1F5FF;
+                border-radius: 10px;
+
+                /* Inside Auto Layout */
+
+                flex: none;
+                order: 0;
+                align-self: center;
+                width: 700px;
+                
+            }
+            .fact-item{
+                flex-direction: column;
+                /* padding: 16px 20px; */
+                /* padding-top: 20px; */
+                padding-left: 0px;
+                /* align-self: center; */
+
+                position: static;
+                /* width: 574px; */
+                /* height: 56px; */
+                /* left: 10px; */
+                /* top: 164px; */
+                white-space: normal;
+                /* word-wrap: break-word; */
+                /* padding-left: 0; */
+       
+                
+                text-align: left;
+                /* P(shade 10) */
+
+                background: #F5F8FF;
+                border-radius: 4px;
+
+                /* Inside Auto Layout */
+
+                flex: none;
+                order: 2;
+                align-self: center;
+                margin: 0px 2px;
+                border-color: #F5F8FF;;
+            }
+            .button-items{
+                flex-direction: row;
+                left: 24px;
+                margin-top: 5px;
+                margin-left: 5px;
+
+                background: #FFFFFF;
+                border-radius: 1000px;
+            }
+            .fact-item:hover {
+                background: #4B57D2;
+                color: #FFFFFF;
+                 }
+            canvas{
+                display: block;
+ 
+            }
+            i{ 
+            position: absolute; 
+            left: 560px;; 
+            top: 26px; 
+            color: #FFFFFF;
+            width: 50px;
+            height: 38px;
+            background: #4B57D2;
+            border-radius: 6px;
+            padding-top: 6px;
+            padding-left: 12px;
+        } 
+
+        .text-title{
+            position: static;
+            width: 98px;
+            height: 27px;
+            /* left: 24px; */
+            /* top: 30px; */
+
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 24px;
+            line-height: 112%;
+            /* identical to box height, or 27px */
+
+            letter-spacing: -0.03em;
+            /* font-feature-settings: 'tnum' on, 'lnum' on; */
+
+            /* text color */
+
+            color: #232323;
+
+            /* Inside Auto Layout */
+
+            flex: none;
+            order: 0;
+            align-self: flex-start;
+            margin: 10px;
+            padding-left: 5px;
+            }
+
+        .highlight {
+            background-color: #CDD9FF;
+            }
+
+            
+        #loader {
+    	        position: absolute;
+    	        left: 50%;
+    	        top: 50%;
+    	        z-index: 1;
+    	        margin: -75px 0 0 -75px;
+    	        border: 50px solid #f3f3f3;
+    	        border-radius: 50%;
+    	        border-top: 50px solid  #4B57D2;
+    	        width: 400px;
+    	        height: 400px;
+    	        -webkit-animation: spin 2s linear infinite;
+    	        animation: spin 2s linear infinite;
+
+    }
+    @-webkit-keyframes spin {
+  		0% { -webkit-transform: rotate(0deg); }
+  		100% { -webkit-transform: rotate(360deg); }
+		  }
+
+	@keyframes spin {
+	  0% { transform: rotate(0deg); }
+	  100% { transform: rotate(360deg); }
+	}
+
+
+        </style>
+    </head>
+    <body>
+        
+        <div id="loader"></div>
+
+        <div class="row rectangle">
+            <div>
+                <form action="{{ url_for('index_')}}" id="form" method="post">
+                    <input type="text" name="text" id="input" required>
+                    <i class="fa fa-search" type='submit' style="font-size:24px; padding-right: 10px;"></i>
+                </form>
+
+                
+            </div>
+
+
+        </div>
+        <div class="container">
+            <div class="row">
+                <h3 class="" style="margin-top: 35px; margin-bottom: -35px; text-align: left; margin-left: -120px;">Search result for: {{text}}</h3>
+                <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8 facts">
+                    {% for string in string_string_data %}
+                                {% for k,v in string.items() %}
+                                    {% if k == "Results" %}
+                    <div class="">
+                        
+                            
+                                
+                        <h4 class="text-title">{{k|split_space}}</h4>
+                            <table class="table table-bordered table-responsive">
+
+
+                                <thead>
+                                  <tr>
+                                    <th>Search Result</th>
+                            
+                                    <th>Link to full article</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                    {% for item in v %}
+                                  <tr>
+                                    <td><a class="btn btn-large btn-block btn-default fact-item" href="{{ url_for('subgraph', text = item['key'])}}" role="button" style="width:fit-content">{{item["key"]}}</a>
+                                    </td>
+                                    <td><a class="btn btn-large btn-block btn-default fact-item" href="{{item['links']}}" role="button" style="width:fit-content">{{item["links"]}}</a></td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+
+
+                              </table>      
+                    </div>
+                    {% endif %}
+                    {%endfor%}{%endfor%}  
+                
+
+                    
+                </div>
+
+                
+                <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4 other-item">
+                    {% for string in string_string_data %}
+                            {% for k,v in string.items() %}
+                            {% if k != "Results" %}
+                    <div class="panel panel-default other-items">
+                        <div class="panel-body">
+                            <h4 class="text-title">{{k|split_space}}</h4>
+                                {% for item in v %}
+                                <a class="btn btn-sm btn-default button-items" href="" role="button">{{item["key"]}}</a>
+                                {% endfor %}
+
+
+                        </div>
+                    </div>
+                    {% endif %}
+                    {%endfor%}{%endfor%}
+
+                    {% if string_integer_data or datetime_integer_data or string_float_data %}
+                    <div class="panel panel-default other-items">
+                        <h4 class="text-title">Statistics</h4>
+                        <div class="panel-body">
+                           <div>
+                                <div class="">
+                                    {% for string in string_integer_data %}
+                                    {% for k,v in string.items()%}
+                                    <button type="button" id ="{{k}}" data-toggle="collapse" class="btn" data-target="#myChart" value="{{k}}" onclick="button_click(this.id)">{{k|split_space}}</button>
+                                    {%endfor%}{%endfor%}
+                                </div>
+
+                                <div class="">
+                                    {% for datetime in datetime_integer_data %}
+                                    {% for k,v in datetime.items()%}
+                                    <button type="button" id ="{{k}}" data-toggle="collapse" data-target="#lineChart" class="btn n" value="{{k}}" onclick="button_click_di(this.id)">{{k|split_space}}</button>
+                                    {%endfor%}{%endfor%}
+                                </div>
+                                
+                                <div class="">
+                                    {% for float in string_float_data %}
+                                    {% for k,v in float.items()%}
+                                    <button type="button" id ="{{k}}" data-toggle="collapse" data-target="#barChart" class="btn" value="{{k}}" onclick="button_click_sf(this.id)">{{k|split_space}}</button>
+                                    {%endfor%}{%endfor%}
+                                </div>
+
+                           </div>
+
+                           
+                        
+                        </div>
+                    
+                    
+                    </div>
+                
+                    <div class="panel panel-default  other-items">
+                    <div>
+                        <canvas class="collapse" id="myChart"></canvas>
+                    </div>
+                    <div>
+                        <canvas class="collapse" id="lineChart"></canvas>
+                    </div>
+                
+                    <div>
+                        <canvas  class="collapse" id="barChart"></canvas>
+                    </div>
+
+                
+                    </div>
+                    {% endif %}
+                
+                
+                </div>
+            </div>
+        </div>
+
+
+
+        <!-- jQuery -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <!-- Bootstrap JavaScript -->
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+        <script>
+            document.getElementById("loader").style.display = "none";
+                $('#form').submit(function() {
+                  document.getElementById("loader").style.display = "block";
+                });
+            var line_data = {% if datetime_integer_data is defined %}{{ datetime_integer_data|tojson }} {% else %} {{[]}} {% endif %}
+            var bar_data1 = {% if string_float_data is defined %}{{ string_float_data|tojson }} {% else %} {{[]}} {% endif %}
+            // console.log(line_data);
+            var bar_data = {% if string_integer_data is defined %}{{ string_integer_data|tojson }} {% else %} {{[]}} {% endif %}
+            function linechart(labels, data, element, title){
+                var ctx = document.getElementById(element).getContext('2d');
+                var myChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: title,
+                            data: data,
+                            backgroundColor: [
+                                'rgba(255, 99, 132, 0.2)',
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 206, 86, 0.2)',
+                                'rgba(75, 192, 192, 0.2)',
+                                'rgba(153, 102, 255, 0.2)',
+                                'rgba(255, 159, 64, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(255, 99, 132, 1)',
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 206, 86, 1)',
+                                'rgba(75, 192, 192, 1)',
+                                'rgba(153, 102, 255, 1)',
+                                'rgba(255, 159, 64, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            yAxes: [{
+                                ticks: {
+                                    beginAtZero: true
+                                }
+                            }]
+                        }
+                    }
+                });
+            
+            }
+        
+            function barchart(labels, data, element, title){
+            var ctx = document.getElementById(element).getContext('2d');
+            var myChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: title,
+                        data: data,
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)',
+                            'rgba(255, 206, 86, 0.2)',
+                            'rgba(75, 192, 192, 0.2)',
+                            'rgba(153, 102, 255, 0.2)',
+                            'rgba(255, 159, 64, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)',
+                            'rgba(255, 206, 86, 1)',
+                            'rgba(75, 192, 192, 1)',
+                            'rgba(153, 102, 255, 1)',
+                            'rgba(255, 159, 64, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+            });
+            }                 
+
+
+
+            function button_click(click_id){
+                var labels = []
+                var data  = []
+                bar_data.forEach((item)=>{
+                    if (item[click_id]){
+                        item[click_id].forEach((d) =>{
+                            labels.push(d.key)
+                            data.push(d.value)
+                        
+                        });
+                    }
+                });
+                var bar = barchart(labels, data, 'myChart', click_id)
+            }
+        
+        
+            function button_click_di(click_id_di){
+                var labels = []
+                var data  = []
+                line_data.forEach((item)=>{
+                    if (item[click_id_di]){
+                        // console.log(item[click_id_di])
+                        item[click_id_di].forEach((d) =>{
+                            // console.log(d)
+                            labels.push(d.value)
+                            data.push(d.key)
+                        
+                        });
+                    }
+                });
+                // console.log(data)
+                var linechart1 = linechart(labels, data, 'lineChart', click_id_di)
+            }
+        
+            function button_click_sf(click_id_sf){
+                var labels = []
+                var data  = []
+                bar_data1.forEach((item)=>{
+                    if (item[click_id_sf]){
+                        // console.log(item[click_id_sf])
+                        item[click_id_sf].forEach((d) =>{
+                            // console.log(d)
+                            labels.push(d.key)
+                            data.push(d.value)
+                        
+                        });
+                    }
+                });
+                // console.log(data)
+                var bar = linechart(labels, data, "barChart", click_id_sf)
+            
+            }
+
+            $(".n").trigger('click');
+            var text = "{{text|string}}";
+            function highlight() {
+                var text_lower = text.toLowerCase()
+            	var ar = text_lower.split(' ') 
+                var inputTexts = document.getElementsByClassName("fact-item");
+                for (let inputText of inputTexts) {
+                    var innerHTML = inputText.innerHTML.toLowerCase();
+                    // console.log(innerHTML.toLowerCase())
+                    ar.forEach((text) =>{
+                    	var index = innerHTML.indexOf(text);
+                        if (index >= 0 & text.length > 4)  { 
+                            innerHTML = innerHTML.substring(0,index) + "<span class='highlight'>" + innerHTML.substring(index,index+text.length) + "</span>" + innerHTML.substring(index + text.length);
+                            inputText.innerHTML = innerHTML;
+                            console.log(inputText)
+
+                            }
+                            });
+                }
+                        }
+            highlight()
+            // console.log(highlight())
+
+        </script>
+    </body>
+</html>

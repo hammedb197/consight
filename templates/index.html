@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>title</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <style>
+    .topic{
+          position: absolute;
+          width: 190px;
+          /* height: 45.08px; */
+          /* left:400px; */
+		      left:555px;
+          top: 192px;
+
+          font-family: Arial, Helvetica, sans-serif;
+          font-size: 48px;
+          line-height: 97%;
+          /* or 23px */
+
+          letter-spacing: -0.05em;
+          /* font-feature-settings: 'tnum' on, 'lnum' on; */
+
+          /* primary color */
+
+          color: #4B57D2;
+          opacity: 0.4;
+		  }
+
+    .search-text{
+      /* position: static; */
+		  margin-left: 558px;
+      /* margin-left: 380px; */
+      width: 280px;
+      height: 108px;
+      margin-top: 55%;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 32px;
+      line-height: 112%;
+      letter-spacing: -0.03em;
+      color: #232323;
+      }
+    html,body {
+    	height:100%;
+		
+		}
+
+    .container,.col-md-7,.row, .col-md-5 {
+    	height:100%;
+		}
+
+    .girl{
+        /* background-image: url({{url_for('static', filename='img/black-female-in-medical-mask-on-street.svg')}}); */
+        height: 100vh;
+        background-size: cover;
+        background-repeat: no-repeat;
+        position:static;
+
+          }
+    input[type="text"] {
+        /* position: relative; */
+        width: 520px;
+        height: 70px;
+        background: #FFFFFF;
+        box-shadow: 0px 20px 40px rgba(0, 0, 0, 0.07);
+        border-radius: 6px;
+        left: 48.5%;
+        top: 55%;
+        position: absolute;
+        transform: translate(-100%, -40%);
+        /* border-color: #FFFFFF; */
+        border:1px
+ 
+        /* z-index: 1; */
+        }
+    .search{
+        left: 47.8%;
+        top: 55%;
+        position: absolute;
+        transform: translate(-100%, -40%);
+        width: 111px;
+        height: 42px;
+        /* primary color */
+
+        background: #4B57D2;
+        border-radius: 6px;
+        /* z-index: 0; */
+        color: #FFFFFF;
+        font-size: 16px;
+        /* font-family: CeraGR-Medium; */
+        font-family: Arial, Helvetica, sans-serif;
+        letter-spacing: -0.03em;
+        /* font-feature-settings: 'tnum' on, 'lnum' on; */
+        line-height: 112%;
+
+    }
+
+#loader {
+    	position: absolute;
+    	left: 50%;
+    	top: 50%;
+    	z-index: 1;
+    	margin: -75px 0 0 -75px;
+    	border: 50px solid #f3f3f3;
+    	border-radius: 50%;
+    	border-top: 50px solid  #4B57D2;
+    	width: 400px;
+    	height: 400px;
+    	-webkit-animation: spin 2s linear infinite;
+    	animation: spin 2s linear infinite;
+
+    }
+#processing {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      z-index: 1;
+      margin: -75px 0 0 -75px;
+      border: 50px solid #f3f3f3;
+      border-radius: 50%;
+      border-top: 50px solid  #4B57D2;
+      width: 400px;
+      height: 400px;
+      -webkit-animation: spin 2s linear infinite;
+      animation: spin 2s linear infinite;
+
+  }
+@-webkit-keyframes spin {
+    0% { -webkit-transform: rotate(0deg); }
+    100% { -webkit-transform: rotate(360deg); }
+    
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+    
+}
+.upload{
+      background: #4B57D2;
+      border-radius: 6px;
+      /* z-index: 0; */
+      color: #FFFFFF;
+      font-size: 16px;
+      /* font-family: CeraGR-Medium; */
+      font-family: Arial, Helvetica, sans-serif;
+      letter-spacing: -0.03em;
+      /* font-feature-settings: 'tnum' on, 'lnum' on; */
+      line-height: 112%;
+      left:30px;
+      top:50px;
+      height: 42px;
+      
+      
+  }
+ 
+    
+
+    
+  </style>
+
+</head>
+<body>
+
+<div class="">
+    
+  <div class="row">
+    <!-- <form action = "/api"" method = "post" enctype="multipart/form-data">
+        <input type="file" name="file" />
+        <input type = "submit" value="Upload">
+    </form> -->
+    <div class="input-container">
+        <form id="form" action="{{ url_for('index_')}}" method="post">
+            <input type="text" name="text" id="input" required>
+            <button type="submit" class="search"><i class="fa fa-search" style="color: #FFFFFF;padding-right: 5px;"></i><span style="padding-left: 10px;">Search</span></button>
+            <!-- <input type="submit" value="Search" class="search"> -->
+        </form>
+
+        <form id="uploadfile" action="{{ url_for('save_img')}}" method="post">
+          <input type="file" class="form-control-file border" name="file" id="" style="margin-top: 20px; position: absolute; margin-left: 50px;">
+          <button type="submit" class="upload" style="position:absolute;"><span style="padding-left: 2px;">Upload</span></button>
+        </form>
+   </div>
+    <div class="col-md-5 first-col" style="background: #F5F8FF; height: 100vh; position:static;">
+        <h4 class="search-text">What would you like to know about Covid-19?</h4>
+        <h3 class="topic">Covid-19 Insight</h3>
+
+    </div>
+    <div class="col-md-7 girl" style="background-image: url({{url_for('static', filename='img/black-female-in-medical-mask-on-street.svg')}})">
+      <div id="loader"></div>
+      <div id='processing'></div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+  document.getElementById("loader").style.display = "none";
+  $('#form').submit(function() {
+    document.getElementById("loader").style.display = "block";
+  });
+  
+  document.getElementById("processing").style.display = "none";
+  $('#uploadfile').submit(function() {
+    document.getElementById("processing").style.display = "block";
+  });
+</script>
+</body>
+
+</html>
