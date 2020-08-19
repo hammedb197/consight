@@ -22,21 +22,12 @@ def sendToNeo4jsave(query, **kwargs):
     consumer = db.run(query, **kwargs)
     print('done')
     
-def make_celery(app):
-    celery = Celery(
-        app.import_name,
-        backend = app.config['CELERY_RESULT_BACKEND'],
-        broker = app.config['CELERY_BROKER_URL']
-    )
-    celery.conf.update(app.config)
+celery = Celery(app.name, broker="")
+celery.conf.update({
+    "CELERY_BROKER_URL": "redis://localhost:6379",
+    "CELERY_RESULT_BACKEND": "redis://localhost:6379"
+})
 
-    class ContextTask(celery.Task):
-        def __call__(self, *args, **kwargs):
-            with app.app_context():
-                return self.run(*args, **kwargs)
-
-    celery.Task = ContextTask
-    return celery
 
 """SparkOcr.ipynb
 Spark OCR
@@ -149,11 +140,11 @@ def ocr_pipeline():
         return pipeline
 
 app = Flask(__name__)
-app.config.update(
-    CELERY_BROKER_URL='redis://localhost:6379',
-    CELERY_RESULT_BACKEND='redis://localhost:6379'
-)
-celery = make_celery(app)
+#app.config.update(
+#    CELERY_BROKER_URL='redis://localhost:6379',
+#    CELERY_RESULT_BACKEND='redis://localhost:6379'
+#)
+# celery = make_celery(app)
 
 @celery.task(name='spark.run_spark_pipeline')
 def run_spark_pipeline(files):
