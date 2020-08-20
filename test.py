@@ -78,15 +78,15 @@ def update_text_pipeline():
         .setInputCols(["sentence"]) \
         .setOutputCol("tokens")
 
-    spell = NorvigSweetingModel().pretrained("spellcheck_norvig", "en") \
+#    spell = NorvigSweetingModel().pretrained("spellcheck_norvig", "en") \
           .setInputCols("tokens") \
           .setOutputCol("spell")
     
-    tokenAssem = TokenAssembler() \
+#    tokenAssem = TokenAssembler() \
           .setInputCols("spell") \
           .setOutputCol("newDocs")
 
-    updatedText = UpdateTextPosition() \
+#    updatedText = UpdateTextPosition() \
           .setInputCol("positions") \
           .setOutputCol("output_positions") \
           .setInputText("newDocs.result")
@@ -95,9 +95,9 @@ def update_text_pipeline():
         document_assembler,
         sentence_detector,
         tokenizer,
-        spell,
-        tokenAssem,
-        updatedText
+#        spell,
+#        tokenAssem,
+#        updatedText
     ])
     
     return pipeline
@@ -147,7 +147,7 @@ def run_spark_pipeline(files):
     print("pipeline loaded")
     res = result.toPandas()
     print("to pandas")
-    results = res[["path", "pagenum", "confidence", "text", "document", "newDocs", "spell"]]
+    results = res[["path", "pagenum", "confidence", "text"]]
     document = {
     "pagenum": "",
     "sentence": [],
