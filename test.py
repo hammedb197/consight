@@ -21,7 +21,7 @@ def sendToNeo4j(query, **kwarg):
 
 def sendToNeo4jsave(query, **kwargs):
     # driver = GraphDatabase.driver('bolt://167.71.99.31:7687', auth=('neo4j', 'graph'))
-    driver = GraphDatabase.driver('bolt://54.87.236.230', auth=('neo4j', 'injector-helmsmen-uncertainty'))
+    driver = GraphDatabase.driver('bolt://54.87.236.230:32940', auth=('neo4j', 'injector-helmsmen-uncertainty'))
 
     db = driver.session()
     consumer = db.run(query, **kwargs)
@@ -172,8 +172,8 @@ def run_spark_pipeline(files):
 
     query = """
         with $document as row
-        MERGE (pagnum:PAGE_NUMBER {text:row.page_num})
-        MERGE (documentnum:DOCUMENT_NUMBER {text:row.document_num})
+        MERGE (pagnum:PAGE_NUMBER {text:row.pagenum)
+        MERGE (documentnum:DOCUMENT_NUMBER {text:row.documentnum})
         MERGE (confidence: CONFIDENCE {text:row.confidence})
         MERGE (content:CONTENT {text:row.text})
         //MERGE (result: RESULT {text:sent})
@@ -184,7 +184,9 @@ def run_spark_pipeline(files):
         //MERGE (documentnum)-[:SENTENCE]->(RESULT)
 
         """
-    sendToNeo4jsave(query, document=document)
+    for index, row in document.iterrows():
+    
+        sendToNeo4jsave(query, document=row)
     return results
 
 categor = []
@@ -697,12 +699,9 @@ def save_img():
         file_uploaded = request.files['file']
         filename = secure_filename(file_uploaded.filename)
         file_uploaded.save('upload/' + filename)
-        print(os.path.join("upload/", filename))
-        check = open(os.path.join("upload/", filename))	
-        print(check)
-        run_spark_pipeline("MAJQ.pdf")
+        run_spark_pipeline('upload/' + filename)
         return redirect(url_for('index'))
-#         result.wait()  # 65
+ 
 
 
 
@@ -710,4 +709,3 @@ if __name__ == "__main__":
     app.jinja_env.filters['split_space'] = split_space
     app.run(host="0.0.0.0", port=8181)
     
-#text = request.form['text']
