@@ -170,12 +170,32 @@ def run_spark_pipeline(files):
     print("to pandas")
     print(type(document))
 
+    document = {
+    "pagenum": "",
+    "sentence": "",
+    "content" : "",
+    "documentnum" : '',
+    "confidence": ""
+    }
+ 
+    document['content'] =  results["text"]
+    
+    # document['content'] =results['document']
+    document['pagenum'] = results['pagenum']
+    document['confidence'] = results['confidence']
+    document["documentnum"] = results['documentnum']
+    print(document)
     query = """
         with $document as row
-        MERGE (pagnum:PAGE_NUMBER {text:row.pagenum)
-        MERGE (documentnum:DOCUMENT_NUMBER {text:row.documentnum})
-        MERGE (confidence: CONFIDENCE {text:row.confidence})
-        MERGE (content:CONTENT {text:row.text})
+        unwind row["pagenum"] as page_num
+        unwind row["documentnum"] as document_num
+        unwind row['confidence'] as confidence_level
+        //unwind row['content'] as doc_content
+        //unwind row.sentence as sent
+        MERGE (pagnum:PAGE_NUMBER {text:page_num})
+        MERGE (documentnum:DOCUMENT_NUMBER {text:document_num})
+        MERGE (confidence: CONFIDENCE {text:confidence_level})
+        MERGE (content:CONTENT {text:doc_content})
         //MERGE (result: RESULT {text:sent})
 
         MERGE (documentnum)-[:PAGE_NUMBER]->(pagnum)
@@ -184,9 +204,7 @@ def run_spark_pipeline(files):
         //MERGE (documentnum)-[:SENTENCE]->(RESULT)
 
         """
-    for index, row in document.iterrows():
-    
-        sendToNeo4jsave(query, document=row)
+    sendToNeo4jsave(query, document=document)
     return results
 
 categor = []
@@ -699,9 +717,10 @@ def save_img():
         file_uploaded = request.files['file']
         filename = secure_filename(file_uploaded.filename)
         file_uploaded.save('upload/' + filename)
-        run_spark_pipeline('upload/' + filename)
+        print(os.path.join("upload/", filename))
+        run_spark_pipeline(os.path.join("upload/", filename))
         return redirect(url_for('index'))
- 
+#         result.wait()  # 65
 
 
 
