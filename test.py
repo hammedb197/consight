@@ -1,9 +1,11 @@
+
 from flask import Flask, request, render_template , flash, jsonify,redirect, url_for
 from neo4j import GraphDatabase
 import json
 from werkzeug.utils import secure_filename
 
 from bing_search import search_web
+from pyspark import  SparkConf
 
 
 
@@ -12,13 +14,13 @@ app = Flask(__name__, static_url_path='/static')
 app.secret_key = 'dljsaklqk24e21cjn!Ew@@dsa5'
 def sendToNeo4j(query, **kwarg):
     
-    driver = GraphDatabase.driver('bolt://localhost:7687', auth=('neo4j', 'graph'))
+    driver = GraphDatabase.driver('bolt://167.71.99.31:7687', auth=('neo4j', 'graph'))
     db = driver.session()
     consumer = db.run(query, **kwarg) 
     return [dict(i) for i in consumer]
 
 def sendToNeo4jsave(query, **kwargs):
-    driver = GraphDatabase.driver('bolt://localhost:7687', auth=('neo4j', 'graph'))
+    driver = GraphDatabase.driver('bolt://167.71.99.31:7687', auth=('neo4j', 'graph'))
     db = driver.session()
     consumer = db.run(query, **kwargs)
     print('done')
@@ -44,23 +46,48 @@ import sys
 """## Initialization of spark session
 Need specify path to `spark-ocr-assembly.jar` or `secret`
 """
- os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64/jre"
+os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64/jre"
 #os.environ['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home/jre"
 from sparkocr import start
 
 
 if license:
     os.environ['JSL_OCR_LICENSE'] = license
+spark = start(secret=secret , nlp_version="2.4.5", extra_conf=SparkConf()\
+        .setMaster("local[*]")\
+        .setAppName("text")\
+        .set("spark.driver.memory", "6G")\
+        .set("spark.serializer", "org.apache.spark.serializer.KryoSerializer")\
+        .set("spark.kryoserializer.buffer.max", "2000M")\
+        .set("spark.sql.execution.arrow.pyspark.enabled", "true")\
+        .set("spark.sql.execution.arrow.enabled", "true")\
+        .set("spark.sql.parquet.compression.codec", "gzip"))
 
-spark = start(secret=secret, nlp_version="2.4.5")
+#spark = start(secret=secret, nlp_version="2.4.5")
+from pyspark.ml import Pipeline
+from pyspark.sql import SparkSession
 
+def start(secret, nlp_version):
+    builder = SparkSession.builder \
+        .appName("text-extract") \
+        .master("local[*]") \
+        .config("spark.driver.memory", "6G") \
+        .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer") \
+        .config("spark.kryoserializer.buffer.max", "2000M") \
+       
 
+      
+    return builder.getOrCreate()
+
+#spark = start(secret, nlp_version="2.4.5")
 from pyspark.ml import Pipeline
 from pyspark.ml import PipelineModel
 from sparkocr.transformers import *
 from sparknlp.annotator import *
 from sparknlp.base import *
 from sparkocr.enums import PageSegmentationMode
+
+
 
 """## Define OCR transformers and pipeline"""
 
@@ -79,17 +106,17 @@ def update_text_pipeline():
         .setOutputCol("tokens")
 
 #    spell = NorvigSweetingModel().pretrained("spellcheck_norvig", "en") \
-          .setInputCols("tokens") \
-          .setOutputCol("spell")
+      #    .setInputCols("tokens") \
+     #     .setOutputCol("spell")
     
 #    tokenAssem = TokenAssembler() \
-          .setInputCols("spell") \
-          .setOutputCol("newDocs")
+    #      .setInputCols("spell") \
+   #       .setOutputCol("newDocs")
 
 #    updatedText = UpdateTextPosition() \
-          .setInputCol("positions") \
-          .setOutputCol("output_positions") \
-          .setInputText("newDocs.result")
+#          .setInputCol("positions") \
+  #        .setOutputCol("output_positions") \
+ #         .setInputText("newDocs.result")
 
     pipeline = Pipeline(stages=[
         document_assembler,
@@ -137,17 +164,31 @@ def ocr_pipeline():
 
  
 def run_spark_pipeline(files):
-    df = spark.read \
-            .format("binaryFile") \
-            .load(files)
+    print(files)
+    df =  spark.read.format("binaryFile").load(files).cache()
     """## Run OCR pipelines"""
     # print('file laoded
     ocr_result = ocr_pipeline().fit(df).transform(df)
     result= update_text_pipeline().fit(ocr_result).transform(ocr_result)
     print("pipeline loaded")
-    res = result.toPandas()
+    print(result)
+    print(type(result))
+    result = result.select("text", "path", "documentnum", "pagenum")
+#    print(result.show())
+    result.write.parquet("file.parquet", mode="overwrite")
+    import pyarrow.parquet as pq
+    res = pq.read_table("file.parquet")
+    results = res.to_pandas()
+#    results = result.toPandas()
     print("to pandas")
-    results = res[["path", "pagenum", "confidence", "text"]]
+    print(results.columns)
+    print(results)
+    print("to pandas")
+    print(type(results))
+
+    #results = result[["path", "pagenum", "confidence", "text"]]
+    return results
+def runme():
     document = {
     "pagenum": "",
     "sentence": [],
@@ -155,14 +196,13 @@ def run_spark_pipeline(files):
     "documentnum" : '',
     "confidence": ""
     }
-    for i in result["sentence"]:
-        for sent in i:
-          document['sentence'].append(sent["result"])
-    for j in result['document']:
-      document['content'].append(j[0]['result'])
-    document['pagenum'] = list(result.pagenum)
-    document['confidence'] = list(result.confidence)
-    document["documentnum"] = list(result.documentnum)
+ 
+    document['sentence'] =  results["sentence"]
+    
+    document['content'] =results['document']
+    document['pagenum'] = results['pagenum'].toArray().tolist()
+    document['confidence'] = results['confidence']
+    document["documentnum"] = results['documentnum']
     print(document)
     query = """
         with $document as row
@@ -217,7 +257,7 @@ def index_():
         else:
             result_query = """
             CALL db.index.fulltext.queryRelationships("tags", $search_input) YIELD relationship, score
-            where score > 1
+            where score > 0.6
             match (node)-[relationship]->(b)
             unwind labels(node) as n
             unwind labels(b) as bb
@@ -233,7 +273,7 @@ def index_():
                 search_web(text)
                 result_query = """
                 CALL db.index.fulltext.queryRelationships("tags", $search_input) YIELD relationship, score
-                where score > 1
+                where score > 0.6
                 match (node)-[relationship]->(b)
                 unwind labels(node) as n
                 unwind labels(b) as bb
@@ -696,7 +736,10 @@ def save_img():
         file_uploaded = request.files['file']
         filename = secure_filename(file_uploaded.filename)
         file_uploaded.save('upload/' + filename)
-        run_spark_pipeline(os.path.join("upload/", filename))
+        print(os.path.join("upload/", filename))
+        check = open(os.path.join("upload/", filename))	
+        print(check)
+        run_spark_pipeline("MAJQ.pdf")
         return redirect(url_for('index'))
 #         result.wait()  # 65
 
