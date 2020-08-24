@@ -20,7 +20,9 @@ def sendToNeo4j(query, **kwarg):
     return [dict(i) for i in consumer]
 
 def sendToNeo4jsave(query, **kwargs):
-    driver = GraphDatabase.driver('bolt://167.71.99.31:7687', auth=('neo4j', 'graph'))
+    # driver = GraphDatabase.driver('bolt://167.71.99.31:7687', auth=('neo4j', 'graph'))
+    driver = GraphDatabase.driver('bolt://54.87.236.230', auth=('neo4j', 'injector-helmsmen-uncertainty'))
+
     db = driver.session()
     consumer = db.run(query, **kwargs)
     print('done')
@@ -65,21 +67,7 @@ spark = start(secret=secret , nlp_version="2.4.5", extra_conf=SparkConf()\
 
 #spark = start(secret=secret, nlp_version="2.4.5")
 from pyspark.ml import Pipeline
-from pyspark.sql import SparkSession
 
-def start(secret, nlp_version):
-    builder = SparkSession.builder \
-        .appName("text-extract") \
-        .master("local[*]") \
-        .config("spark.driver.memory", "6G") \
-        .config("spark.serializer", "org.apache.spark.serializer.KryoSerializer") \
-        .config("spark.kryoserializer.buffer.max", "2000M") \
-       
-
-      
-    return builder.getOrCreate()
-
-#spark = start(secret, nlp_version="2.4.5")
 from pyspark.ml import Pipeline
 from pyspark.ml import PipelineModel
 from sparkocr.transformers import *
@@ -171,56 +159,29 @@ def run_spark_pipeline(files):
     ocr_result = ocr_pipeline().fit(df).transform(df)
     result= update_text_pipeline().fit(ocr_result).transform(ocr_result)
     print("pipeline loaded")
-    print(result)
-    print(type(result))
-    result = result.select("text", "path", "documentnum", "pagenum")
-#    print(result.show())
+    result = result.select("text", "path", "documentnum", "pagenum", "confidence")
     result.write.parquet("file.parquet", mode="overwrite")
     import pyarrow.parquet as pq
     res = pq.read_table("file.parquet")
-    results = res.to_pandas()
-#    results = result.toPandas()
+    document = res.to_pandas()
     print("to pandas")
-    print(results.columns)
-    print(results)
-    print("to pandas")
-    print(type(results))
-
-    #results = result[["path", "pagenum", "confidence", "text"]]
-    return results
-def runme():
-    document = {
-    "pagenum": "",
-    "sentence": [],
-    "content" : [],
-    "documentnum" : '',
-    "confidence": ""
-    }
- 
-    document['sentence'] =  results["sentence"]
-    
-    document['content'] =results['document']
-    document['pagenum'] = results['pagenum'].toArray().tolist()
-    document['confidence'] = results['confidence']
-    document["documentnum"] = results['documentnum']
+    print(document.columns)
     print(document)
+    print("to pandas")
+    print(type(document))
+
     query = """
         with $document as row
-        unwind row["pagenum"] as page_num
-        unwind row["documentnum"] as document_num
-        unwind row['confidence'] as confidence_level
-        unwind row['content'] as doc_content
-        unwind row.sentence as sent
-        MERGE (pagnum:PAGE_NUMBER {text:page_num})
-        MERGE (documentnum:DOCUMENT_NUMBER {text:document_num})
-        MERGE (confidence: CONFIDENCE {text:confidence_level})
-        MERGE (content:CONTENT {text:doc_content})
-        MERGE (result: RESULT {text:sent})
+        MERGE (pagnum:PAGE_NUMBER {text:row.page_num})
+        MERGE (documentnum:DOCUMENT_NUMBER {text:row.document_num})
+        MERGE (confidence: CONFIDENCE {text:row.confidence})
+        MERGE (content:CONTENT {text:row.text})
+        //MERGE (result: RESULT {text:sent})
 
         MERGE (documentnum)-[:PAGE_NUMBER]->(pagnum)
         MERGE (documentnum)-[:CONFIDENCE_LEVEL]->(confidence)
         MERGE (documentnum)-[:CONTENT]->(content)
-        MERGE (documentnum)-[:SENTENCE]->(RESULT)
+        //MERGE (documentnum)-[:SENTENCE]->(RESULT)
 
         """
     sendToNeo4jsave(query, document=document)
