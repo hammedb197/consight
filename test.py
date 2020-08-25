@@ -49,7 +49,7 @@ import sys
 Need specify path to `spark-ocr-assembly.jar` or `secret`
 """
 os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64/jre"
-#os.environ['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home/jre"
+
 from sparkocr import start
 
 
@@ -93,26 +93,13 @@ def update_text_pipeline():
         .setInputCols(["sentence"]) \
         .setOutputCol("tokens")
 
-#    spell = NorvigSweetingModel().pretrained("spellcheck_norvig", "en") \
-      #    .setInputCols("tokens") \
-     #     .setOutputCol("spell")
-    
-#    tokenAssem = TokenAssembler() \
-    #      .setInputCols("spell") \
-   #       .setOutputCol("newDocs")
 
-#    updatedText = UpdateTextPosition() \
-#          .setInputCol("positions") \
-  #        .setOutputCol("output_positions") \
- #         .setInputText("newDocs.result")
 
     pipeline = Pipeline(stages=[
         document_assembler,
         sentence_detector,
-        tokenizer,
-#        spell,
-#        tokenAssem,
-#        updatedText
+        tokenizer
+
     ])
     
     return pipeline
@@ -125,11 +112,6 @@ def ocr_pipeline():
             .setOutputCol("image_raw") \
             .setKeepInput(True)
 
-        # adaptive_thresholding = ImageAdaptiveThresholding() \
-        #     .setInputCol("image_raw") \
-        #     .setOutputCol("corrected_image") \
-        #     .setBlockSize(35) \
-        #     .setOffset(80)
 
         binarizer = ImageBinarizer() \
             .setInputCol("image_raw") \
@@ -191,14 +173,12 @@ def run_spark_pipeline(files):
         unwind row['content'] as doc_content
         //unwind row.sentence as sent
         MERGE (pagnum:PAGE_NUMBER {text:page_num})
-        MERGE (documentnum:DOCUMENT_NUMBER {text:document_num})
-        MERGE (confidence: CONFIDENCE {text:confidence_level})
-        MERGE (content:CONTENT {text:doc_content})
-        //MERGE (result: RESULT {text:sent})
+        MERGE (documentnum:DOCUMENT_NUMBER {text:document_num})-[:PAGE_NUMBER]->(pagnum)
+        MERGE (pagnum)-[:CONFIDENCE_LEVEL]->(confidence: CONFIDENCE {text:confidence_level})
+        MERGE (pagnum)-[:CONTENT]->(content:CONTENT {text:doc_content})
+        //MERGE (pagnum)-[:CONTENT]->(result: RESULT {text:sent})
 
-        MERGE (documentnum)-[:PAGE_NUMBER]->(pagnum)
-        MERGE (pagnum)-[:CONFIDENCE_LEVEL]->(confidence)
-        MERGE (pagnum)-[:CONTENT]->(content)
+    
         //MERGE (documentnum)-[:SENTENCE]->(RESULT)
 
         """
