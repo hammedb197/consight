@@ -178,12 +178,12 @@ def run_spark_pipeline(files):
     "confidence": ""
     }
  
-    document['content'] =  results["text"]
+    document['content'] =  list(results["text"])
     
     # document['content'] =results['document']
-    document['pagenum'] = results['pagenum']
-    document['confidence'] = results['confidence']
-    document["documentnum"] = results['documentnum']
+    document['pagenum'] = list(results['pagenum'])
+    document['confidence'] = list(results['confidence'])
+    document["documentnum"] = list(results['documentnum'])
     print(document)
     query = """
         with $document as row
