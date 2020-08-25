@@ -179,8 +179,6 @@ def run_spark_pipeline(files):
     }
  
     document['content'] =  list(results["text"])
-    
-    # document['content'] =results['document']
     document['pagenum'] = list(results['pagenum'])
     document['confidence'] = list(results['confidence'])
     document["documentnum"] = list(results['documentnum'])
@@ -190,7 +188,7 @@ def run_spark_pipeline(files):
         unwind row["pagenum"] as page_num
         unwind row["documentnum"] as document_num
         unwind row['confidence'] as confidence_level
-        //unwind row['content'] as doc_content
+        unwind row['content'] as doc_content
         //unwind row.sentence as sent
         MERGE (pagnum:PAGE_NUMBER {text:page_num})
         MERGE (documentnum:DOCUMENT_NUMBER {text:document_num})
