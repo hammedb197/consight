@@ -192,8 +192,6 @@ def run_spark_pipeline(files):
         //unwind row.sentence as sent
         MERGE (confidence: CONFIDENCE {text:confidence_level})<-[:CONFIDENCE_LEVEL]-(pagnum:PAGE_NUMBER {text:page_num})-[:CONTENT]->(content:CONTENT {text:doc_content})
         MERGE (documentnum:DOCUMENT_NUMBER {text:document_num})-[:PAGE_NUMBER]->(pagnum)
-        MERGE 
-        MERGE 
         //MERGE (result: RESULT {text:sent})
         //MERGE (documentnum)-[:SENTENCE]->(RESULT)
 
