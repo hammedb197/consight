@@ -163,12 +163,12 @@ def run_spark_pipeline(files):
     result.write.parquet("file.parquet", mode="overwrite")
     import pyarrow.parquet as pq
     res = pq.read_table("file.parquet")
-    document = res.to_pandas()
+    results = res.to_pandas()
     print("to pandas")
-    print(document.columns)
-    print(document)
+    print(results.columns)
+    print(results)
     print("to pandas")
-    print(type(document))
+    print(type(results))
 
     document = {
     "pagenum": "",
