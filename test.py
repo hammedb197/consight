@@ -197,8 +197,8 @@ def run_spark_pipeline(files):
         //MERGE (result: RESULT {text:sent})
 
         MERGE (documentnum)-[:PAGE_NUMBER]->(pagnum)
-        MERGE (documentnum)-[:CONFIDENCE_LEVEL]->(confidence)
-        MERGE (documentnum)-[:CONTENT]->(content)
+        MERGE (pagnum)-[:CONFIDENCE_LEVEL]->(confidence)
+        MERGE (pagnum)-[:CONTENT]->(content)
         //MERGE (documentnum)-[:SENTENCE]->(RESULT)
 
         """
