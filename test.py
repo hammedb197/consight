@@ -92,12 +92,12 @@ def update_text_pipeline():
         .setInputCols(["sentence"]) \
         .setOutputCol("tokens")
         
-    bert = BertEmbeddings.pretrained(name='bert_base_cased', lang='en').setInputCols(["sentence", "tokens"]).setOutputCol("bert")
+    # bert = BertEmbeddings.pretrained(name='bert_base_cased', lang='en').setInputCols(["sentence", "tokens"]).setOutputCol("bert")
 
-    ner_tagger = NerDLModel()\
-     .pretrained(name='ner_dl_bert', lang='en')\
-     .setInputCols("sentence", "tokens", "bert")\
-     .setOutputCol("ner_tags")
+    # ner_tagger = NerDLModel()\
+    #  .pretrained(name='ner_dl_bert', lang='en')\
+    #  .setInputCols("sentence", "tokens", "bert")\
+    #  .setOutputCol("ner_tags")
 
 
 
@@ -105,8 +105,8 @@ def update_text_pipeline():
         document_assembler,
         sentence_detector,
         tokenizer,
-        bert,
-        ner_tagger
+        # bert,
+        # ner_tagger
 
     ])
     
@@ -150,7 +150,8 @@ def run_spark_pipeline(files):
     result= update_text_pipeline().fit(ocr_result).transform(ocr_result)
     print("pipeline loaded")
     from pyspark.sql.functions import col
-    tags = result.select(col('document.result').alias("sentence"), col('ner_tags.result').alias('tags'), col('ner_tags.metadata').alias('word'))
+    # tags = result.select(col('document.result').alias("sentence"), col('ner_tags.result').alias('tags'), col('ner_tags.metadata').alias('word'))
+    tags = result.select(col('document.result').alias("sentence"))
     tag_df = tags.toPandas()
     print(tag_df)
     result = result.select("text", "path", "documentnum", "pagenum", "confidence")
