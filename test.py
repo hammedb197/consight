@@ -146,6 +146,7 @@ def run_spark_pipeline(files):
     import pyarrow.parquet as pq
     res = pq.read_table("file.parquet")
     results = res.to_pandas()
+    results.to_csv('data.csv')
     print("to pandas")
     print(results.columns)
     print(results)
@@ -183,14 +184,12 @@ def run_spark_pipeline(files):
 
     #     """
     query = '''
-    with $document as row
+    LOAD CSV WITH HEADERS FROM 'file:///data.csv' AS row
     MERGE (pagnum:PAGE_NUMBER {text:row['pagenum']})
     MERGE (confidence: CONFIDENCE {text:row['confidence']})
-    MERGE (pagnum)-[:CONFIDENCE_LEVEL]->(confidence)
-    
-    
+    MERGE (pagnum)-[:CONFIDENCE_LEVEL]->(confidence) 
     '''
-    sendToNeo4jsave(query, document=results)
+    sendToNeo4jsave(query)
     return results
 
 categor = []
