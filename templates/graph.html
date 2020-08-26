@@ -55,7 +55,7 @@
     <body>
         <div class="row">
             
-            <i class="fa fa-arrow-circle-o-left" aria-hidden="true" onclick="goBack()" style="padding-left: 50px; padding-top: 20px; color: #CDD9FF; font-size:48px"></i>
+            <i class="fa fa-arrow-circle-o-left" aria-hidden="true" onclick=goBack() style="padding-left: 50px; padding-top: 20px; color: #CDD9FF; font-size:48px"></i>
 
             <!-- <a href=""  text-decoration: none;"><h2 style="padding-left: 50px;" onclick="goBack()">Back</h2></a> -->
         </div>
@@ -89,6 +89,10 @@
                 
                 
             </div>
+            
+        </div>
+        <div class="container">
+            <p id="display_text"></p>
         </div>
         <!-- jQuery -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
@@ -214,6 +218,7 @@
                         .style("stroke", "black")
                         .style("opacity", 1)
                     }
+                    document.getElementById("display_text").style.display = "none";
                     var mousemove = function(d) {
                         console.log("X", event.pageX - 600)
                         console.log("Y", event.pageY - 600)
@@ -221,6 +226,8 @@
                         .html(d.text ||  d.author_name || d.author_institution)
                         .style("left", (d3.mouse(this)[0]+700) + "px")
                         .style("top", (d3.mouse(this)[1]+700) + "px")
+                     document.getElementById("display_text").style.display = "block";
+                     document.getElementById('display_text').innerHTML = d.text || d.author_institution || d.author_name
                     }
                     var mouseleave = function(d) {
                       tooltip
@@ -237,6 +244,8 @@
                         .style("background-color", "green")
                         .style("animation, true")
                         .style("delay,  'show': 1000")
+
+
 
                     }
                     
@@ -261,7 +270,8 @@
             
                 
                 function goBack() {
-                    window.history.back();
+                   // window.history.back();
+                    window.history.go(-1);    
                     }
                 
                 

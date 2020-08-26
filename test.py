@@ -146,14 +146,20 @@ def run_spark_pipeline(files):
     res = pq.read_table("file.parquet")
     results = res.to_pandas()
     result_json = results.to_json(orient="records")
+    result_json =  json.loads(result_json)
     print(result_json)
 
     query = '''
     with $document as rows
     unwind rows as row
-    MERGE (pagnum:PAGE_NUMBER {text:row['pagenum']})
+    MERGE (pagnum:PAGE_NUMBER {text:row.pagenum})
     MERGE (confidence: CONFIDENCE {text:row['confidence']})
+    MERGE (doc:Document {text:row.path})
+    MERGE (content:CONTENT {text:row.text})
     MERGE (pagnum)-[:CONFIDENCE_LEVEL]->(confidence) 
+    MERGE (pagnum)-[:CONTENT]->(content)
+    MERGE (doc)-[:DOCUMENT]->(pagnum)
+    return row
     '''
     sendToNeo4jsave(query, document=result_json)
     return results
