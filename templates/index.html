@@ -15,7 +15,7 @@
           width: 190px;
           /* height: 45.08px; */
           /* left:400px; */
-		      left:555px;
+		      left:350px;
           top: 192px;
 
           font-family: Arial, Helvetica, sans-serif;
@@ -44,6 +44,7 @@
       line-height: 112%;
       letter-spacing: -0.03em;
       color: #232323;
+      margin-left: 350px
       }
     html,body {
     	height:100%;
@@ -181,7 +182,7 @@
             <!-- <input type="submit" value="Search" class="search"> -->
         </form>
 
-        <form id="uploadfile" action="{{ url_for('save_img')}}" method="post">
+        <form id="uploadfile" action="{{ url_for('save_img')}}" method="post" enctype="multipart/form-data">
           <input type="file" class="form-control-file border" name="file" id="" style="margin-top: 20px; position: absolute; margin-left: 50px;">
           <button type="submit" class="upload" style="position:absolute;"><span style="padding-left: 2px;">Upload</span></button>
         </form>

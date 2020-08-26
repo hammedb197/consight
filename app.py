@@ -1,7 +1,8 @@
 from flask import Flask, request, render_template , flash, jsonify,redirect, url_for
+from werkzeug.utils import secure_filename
 from neo4j import GraphDatabase
 import json
-#from bing_search import search_web
+from bing_search import search_web
 import celery
 from celery import Celery
 
@@ -11,21 +12,21 @@ app = Flask(__name__, static_url_path='/static')
 app.secret_key = 'dljsaklqk24e21cjn!Ew@@dsa5'
 def sendToNeo4j(query, **kwarg):
     
-    driver = GraphDatabase.driver('bolt://localhost:7687', auth=('neo4j', 'graph'))
+    driver = GraphDatabase.driver('bolt://167.71.99.31:7687', auth=('neo4j', 'graph'))
     db = driver.session()
     consumer = db.run(query, **kwarg) 
     return [dict(i) for i in consumer]
 
 def sendToNeo4jsave(query, **kwargs):
-    driver = GraphDatabase.driver('bolt://localhost:7687', auth=('neo4j', 'graph'))
+    driver = GraphDatabase.driver('bolt://67.71.99.31:7687', auth=('neo4j', 'graph'))
     db = driver.session()
     consumer = db.run(query, **kwargs)
     print('done')
     
-celery = Celery(app.name, broker="")
+celery = Celery(app.name, broker="redis://localhost:6379")
 celery.conf.update({
-    "CELERY_BROKER_URL": "redis://localhost:6379",
-    "CELERY_RESULT_BACKEND": "redis://localhost:6379"
+    "CELERY_BROKER_URL": "redis://localhost:6379/0",
+    "CELERY_RESULT_BACKEND": "redis://localhost:6379/0"
 })
 
 
@@ -48,8 +49,10 @@ import sys
 """## Initialization of spark session
 Need specify path to `spark-ocr-assembly.jar` or `secret`
 """
-# os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64"
-os.environ['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home/jre"
+
+os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64/jre"
+#os.environ["JAVA_HOME"] = "/usr/lib/jvm/java-8-openjdk-amd64"
+#os.environ['JAVA_HOME'] = "/Library/Java/JavaVirtualMachines/jdk1.8.0_231.jdk/Contents/Home/jre"
 from sparkocr import start
 
 
@@ -139,14 +142,13 @@ def ocr_pipeline():
         ])
         return pipeline
 
-app = Flask(__name__)
 #app.config.update(
 #    CELERY_BROKER_URL='redis://localhost:6379',
 #    CELERY_RESULT_BACKEND='redis://localhost:6379'
 #)
 # celery = make_celery(app)
 
-@celery.task(name='spark.run_spark_pipeline')
+@celery.task
 def run_spark_pipeline(files):
     df = spark.read \
             .format("binaryFile") \
@@ -174,7 +176,7 @@ def run_spark_pipeline(files):
     document['pagenum'] = list(result.pagenum)
     document['confidence'] = list(result.confidence)
     document["documentnum"] = list(result.documentnum)
-    
+    print(document)
     query = """
         with $document as row
         unwind row["pagenum"] as page_num
@@ -232,7 +234,7 @@ def index_():
         else:
             result_query = """
             CALL db.index.fulltext.queryRelationships("tags", $search_input) YIELD relationship, score
-            where score > 4
+            where score > 1
             match (node)-[relationship]->(b)
             unwind labels(node) as n
             unwind labels(b) as bb
@@ -245,10 +247,10 @@ def index_():
             # print(result)
             # print(result[0]["result"])
             if len(result[0]["result"]) < 1 :
-                # search_web(text)
+                search_web(text)
                 result_query = """
                 CALL db.index.fulltext.queryRelationships("tags", $search_input) YIELD relationship, score
-                where score > 5
+                where score > 1
                 match (node)-[relationship]->(b)
                 unwind labels(node) as n
                 unwind labels(b) as bb
@@ -259,7 +261,7 @@ def index_():
                 """
 
                 result = sendToNeo4j(result_query, search_input=text)
-                # print(result)
+                print(result)
 
                 """
                 get start node an endnote then extract category(unique) if len(str(j['startnode']['text'])) < 15
@@ -708,12 +710,16 @@ def subgraph(text):
 def save_img():
     if request.method == "POST":
         
-        file_uploaded = request.form['file']
+        file_uploaded = request.files['file']
+        filename = secure_filename(file_uploaded.filename)
+        file_uploaded.save('upload/' + filename)
         print(file_uploaded)
-        result = run_spark_pipeline.delay(file_uploaded)
-        # async_result = AsyncResult(id=result.task_id, app=celery)
+        result = run_spark_pipeline.delay(os.path.join("upload/", filename))
+       # async_result = AsyncResult(id=result.task_id, app=celery)
         # processing_result = async_result.get()
-        print(result.get())
+       # print(result.get())
+       # os.remove("upload/*.pdf")
+		
         return redirect(url_for('index'))
 #         result.wait()  # 65
 
@@ -721,6 +727,6 @@ def save_img():
 
 if __name__ == "__main__":
     app.jinja_env.filters['split_space'] = split_space
-    app.run(host="0.0.0.0", port=8181, debug=True)
+    app.run(host="0.0.0.0", port=8181)
     
 #text = request.form['text']

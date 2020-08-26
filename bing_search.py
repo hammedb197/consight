@@ -24,7 +24,7 @@ import numpy as np
 import os
 
 def sendToNeo4j(query, **kwargs):
-    driver = GraphDatabase.driver('bolt://localhost:7687', auth=('neo4j', 'graph'))
+    driver = GraphDatabase.driver('bolt://167.71.99.31:7687', auth=('neo4j', 'graph'))
     db = driver.session()
     consumer = db.run(query, **kwargs) 
     print('done')
@@ -199,7 +199,8 @@ def search_web(search_query):
                     //set n.type = dtypes.text
                     //return dtypes.text
                      """       
-                    # sendToNeo4j(query, sentence_total_graphObj=sentence_total_graphObj)
+                    print(sentence_total_graphObj)
+                    sendToNeo4j(query, sentence_total_graphObj=sentence_total_graphObj)
                     
                     
                     
@@ -208,5 +209,5 @@ def search_web(search_query):
 
     except Exception as ex:
         raise ex
-search_query = "effect of covid"    
-search_web(search_query)
+#search_query = "effect of covid"    
+#search_web(search_query)
