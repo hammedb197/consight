@@ -163,8 +163,8 @@ def run_spark_pipeline(files):
     import pandas as pd
     res = pq.read_table("file.parquet")
     results = res.to_pandas()
-    result_json = pd.concat([results, tag_df], axis=0)
-    result_json = result_json.to_json(orient="records")
+    results['sentence'] = tag_df['sentence']
+    result_json = results.to_json(orient="records")
     result_json =  json.loads(result_json)
     print(result_json)
 
