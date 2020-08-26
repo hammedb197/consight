@@ -21,7 +21,7 @@ def sendToNeo4j(query, **kwarg):
 
 def sendToNeo4jsave(query, **kwargs):
     # driver = GraphDatabase.driver('bolt://167.71.99.31:7687', auth=('neo4j', 'graph'))
-    driver = GraphDatabase.driver('bolt://54.87.236.230:32940', auth=('neo4j', 'injector-helmsmen-uncertainty'))
+    driver = GraphDatabase.driver('bolt://54.87.236.230:32960', auth=('neo4j', 'watches-prison-controls'))
 
     db = driver.session()
     consumer = db.run(query, **kwargs)
@@ -154,7 +154,7 @@ def run_spark_pipeline(files):
 
     document = {
     "pagenum": "",
-    "sentence": "",
+    # "sentence": "",
     "content" : "",
     "documentnum" : '',
     "confidence": ""
@@ -165,24 +165,32 @@ def run_spark_pipeline(files):
     document['confidence'] = list(results['confidence'])
     document["documentnum"] = list(results['documentnum'])
     print(document)
-    query = """
-        with $document as row
-        unwind row["pagenum"] as page_num
-        unwind row["documentnum"] as document_num
-        unwind row['confidence'] as confidence_level
-        unwind row['content'] as doc_content
-        //unwind row.sentence as sent
-        MERGE (pagnum:PAGE_NUMBER {text:page_num})
-        MERGE (documentnum:DOCUMENT_NUMBER {text:document_num})-[:PAGE_NUMBER]->(pagnum)
-        MERGE (pagnum)-[:CONFIDENCE_LEVEL]->(confidence: CONFIDENCE {text:confidence_level})
-        MERGE (pagnum)-[:CONTENT]->(content:CONTENT {text:doc_content})
-        //MERGE (pagnum)-[:CONTENT]->(result: RESULT {text:sent})
+    # query = """
+    #     with $document as row
+    #     unwind row["pagenum"] as page_num
+    #     unwind row["documentnum"] as document_num
+    #     unwind row['confidence'] as confidence_level
+    #     unwind row['content'] as doc_content
+    #     //unwind row.sentence as sent
+    #     MERGE (pagnum:PAGE_NUMBER {text:page_num})
+    #     MERGE (documentnum:DOCUMENT_NUMBER {text:document_num})-[:PAGE_NUMBER]->(pagnum)
+    #     MERGE (pagnum)-[:CONFIDENCE_LEVEL]->(confidence: CONFIDENCE {text:confidence_level})
+    #     MERGE (pagnum)-[:CONTENT]->(content:CONTENT {text:doc_content})
+    #     //MERGE (pagnum)-[:CONTENT]->(result: RESULT {text:sent})
 
     
-        //MERGE (documentnum)-[:SENTENCE]->(RESULT)
+    #     //MERGE (documentnum)-[:SENTENCE]->(RESULT)
 
-        """
-    sendToNeo4jsave(query, document=document)
+    #     """
+    query = '''
+    with $document as row
+    MERGE (pagnum:PAGE_NUMBER {text:row['pagenum']})
+    MERGE (confidence: CONFIDENCE {text:row['confidence']})
+    MERGE (pagnum)-[:CONFIDENCE_LEVEL]->(confidence)
+    
+    
+    '''
+    sendToNeo4jsave(query, document=results)
     return results
 
 categor = []
