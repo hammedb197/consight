@@ -171,11 +171,13 @@ def run_spark_pipeline(files):
     query = '''
     with $document as rows
     unwind rows as row
+    unwind row.sentence as sent
     
     MERGE (pagnum:PAGE_NUMBER {text:row.pagenum})
     MERGE (confidence: CONFIDENCE {text:row['confidence']})
     MERGE (doc:Document {text:row.path})
     MERGE (content:CONTENT {text:row.text})
+    MERGE (content)<-[:SENTENCE_FROM]-(Results {text:sent})
     MERGE (pagnum)-[:CONFIDENCE_LEVEL]->(confidence) 
     MERGE (pagnum)-[:CONTENT]->(content)
     MERGE (doc)-[:DOCUMENT]->(pagnum)
