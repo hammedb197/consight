@@ -1,4 +1,3 @@
-
 from flask import Flask, request, render_template , flash, jsonify,redirect, url_for
 from neo4j import GraphDatabase
 import json
@@ -146,50 +145,17 @@ def run_spark_pipeline(files):
     import pyarrow.parquet as pq
     res = pq.read_table("file.parquet")
     results = res.to_pandas()
-    results.to_csv('../neo4j-community-3.5.15/import/data.csv')
-    print("to pandas")
-    print(results.columns)
-    print(results)
-    print("to pandas")
-    print(type(results))
+    result_json = results.to_json(orient="records")
+    print(result_json)
 
-    document = {
-    "pagenum": "",
-    # "sentence": "",
-    "content" : "",
-    "documentnum" : '',
-    "confidence": ""
-    }
- 
-    document['content'] =  list(results["text"])
-    document['pagenum'] = list(results['pagenum'])
-    document['confidence'] = list(results['confidence'])
-    document["documentnum"] = list(results['documentnum'])
-    print(document)
-    # query = """
-    #     with $document as row
-    #     unwind row["pagenum"] as page_num
-    #     unwind row["documentnum"] as document_num
-    #     unwind row['confidence'] as confidence_level
-    #     unwind row['content'] as doc_content
-    #     //unwind row.sentence as sent
-    #     MERGE (pagnum:PAGE_NUMBER {text:page_num})
-    #     MERGE (documentnum:DOCUMENT_NUMBER {text:document_num})-[:PAGE_NUMBER]->(pagnum)
-    #     MERGE (pagnum)-[:CONFIDENCE_LEVEL]->(confidence: CONFIDENCE {text:confidence_level})
-    #     MERGE (pagnum)-[:CONTENT]->(content:CONTENT {text:doc_content})
-    #     //MERGE (pagnum)-[:CONTENT]->(result: RESULT {text:sent})
-
-    
-    #     //MERGE (documentnum)-[:SENTENCE]->(RESULT)
-
-    #     """
     query = '''
-    LOAD CSV WITH HEADERS FROM 'file:///index.csv' AS row
+    with $document as rows
+    unwind rows as row
     MERGE (pagnum:PAGE_NUMBER {text:row['pagenum']})
     MERGE (confidence: CONFIDENCE {text:row['confidence']})
     MERGE (pagnum)-[:CONFIDENCE_LEVEL]->(confidence) 
     '''
-    sendToNeo4jsave(query)
+    sendToNeo4jsave(query, document=result_json)
     return results
 
 categor = []
