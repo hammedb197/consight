@@ -160,8 +160,10 @@ def run_spark_pipeline(files):
 
     
     import pyarrow.parquet as pq
+    import pandas as pd
     res = pq.read_table("file.parquet")
     results = res.to_pandas()
+    result_json = pd.concat([results, tag_df], axis=0)
     result_json = results.to_json(orient="records")
     result_json =  json.loads(result_json)
     print(result_json)
