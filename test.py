@@ -91,13 +91,22 @@ def update_text_pipeline():
     tokenizer = Tokenizer() \
         .setInputCols(["sentence"]) \
         .setOutputCol("tokens")
+        
+    bert = BertEmbeddings.pretrained(name='bert_base_cased', lang='en').setInputCols(["sentence", "tokens"]).setOutputCol("bert")
+
+    ner_tagger = NerDLModel()\
+     .pretrained(name='ner_dl_bert', lang='en')\
+     .setInputCols("sentence", "tokens", "bert")\
+     .setOutputCol("ner_tags")
 
 
 
     pipeline = Pipeline(stages=[
         document_assembler,
         sentence_detector,
-        tokenizer
+        tokenizer,
+        bert,
+        ner_tagger
 
     ])
     
