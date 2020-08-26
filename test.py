@@ -153,7 +153,7 @@ def run_spark_pipeline(files):
     # tags = result.select(col('document.result').alias("sentence"), col('ner_tags.result').alias('tags'), col('ner_tags.metadata').alias('word'))
     tags = result.select(col('document.result').alias("sentence"))
     tag_df = tags.toPandas()
-    print(tag_df)
+    # print(tag_df)
     result = result.select("text", "path", "documentnum", "pagenum", "confidence")
     result.write.parquet("file.parquet", mode="overwrite")
     from pyspark.sql.functions import col
@@ -164,13 +164,14 @@ def run_spark_pipeline(files):
     res = pq.read_table("file.parquet")
     results = res.to_pandas()
     result_json = pd.concat([results, tag_df], axis=0)
-    result_json = results.to_json(orient="records")
+    result_json = result_json.to_json(orient="records")
     result_json =  json.loads(result_json)
     print(result_json)
 
     query = '''
     with $document as rows
     unwind rows as row
+    
     MERGE (pagnum:PAGE_NUMBER {text:row.pagenum})
     MERGE (confidence: CONFIDENCE {text:row['confidence']})
     MERGE (doc:Document {text:row.path})
