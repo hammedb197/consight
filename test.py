@@ -142,6 +142,11 @@ def run_spark_pipeline(files):
     print("pipeline loaded")
     result = result.select("text", "path", "documentnum", "pagenum", "confidence")
     result.write.parquet("file.parquet", mode="overwrite")
+    from pyspark.sql.functions import col
+
+    tags = result.select(col('document.result').alias("sentence"), col('ner_tags.result').alias('tags'), col('ner_tags.metadata').alias('word'))
+    tag_df = tags.toPandas()
+    print(tag_df)
     import pyarrow.parquet as pq
     res = pq.read_table("file.parquet")
     results = res.to_pandas()
