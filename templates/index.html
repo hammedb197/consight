@@ -9,14 +9,19 @@
 
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"> -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script> -->
+  <!-- <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script> -->
   <style>
     .topic{
           position: absolute;
           width: 190px;
           /* height: 45.08px; */
           /* left:400px; */
-		      left:350px;
-          top: 192px;
+		  left:350px;
+          top: 100px;
 
           font-family: Arial, Helvetica, sans-serif;
           font-size: 48px;
@@ -34,11 +39,11 @@
 
     .search-text{
       /* position: static; */
-		  margin-left: 558px;
-      /* margin-left: 380px; */
+		  /* margin-left: 558px; */
       width: 280px;
       height: 108px;
-      margin-top: 55%;
+	  /* top: 130px; */
+      margin-top: 40%;
       font-family: Arial, Helvetica, sans-serif;
       font-size: 32px;
       line-height: 112%;
@@ -101,68 +106,139 @@
 
     }
 
-#loader {
-    	position: absolute;
-    	left: 50%;
-    	top: 50%;
-    	z-index: 1;
-    	margin: -75px 0 0 -75px;
-    	border: 50px solid #f3f3f3;
-    	border-radius: 50%;
-    	border-top: 50px solid  #4B57D2;
-    	width: 400px;
-    	height: 400px;
-    	-webkit-animation: spin 2s linear infinite;
-    	animation: spin 2s linear infinite;
+	#loader {
+	    	position: absolute;
+	    	left: 50%;
+	    	top: 50%;
+	    	z-index: 1;
+	    	margin: -75px 0 0 -75px;
+	    	border: 50px solid #f3f3f3;
+	    	border-radius: 50%;
+	    	border-top: 50px solid  #4B57D2;
+	    	width: 400px;
+	    	height: 400px;
+	    	-webkit-animation: spin 2s linear infinite;
+	    	animation: spin 2s linear infinite;
 
-    }
-#processing {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      z-index: 1;
-      margin: -75px 0 0 -75px;
-      border: 50px solid #f3f3f3;
-      border-radius: 50%;
-      border-top: 50px solid  #4B57D2;
-      width: 400px;
-      height: 400px;
-      -webkit-animation: spin 2s linear infinite;
-      animation: spin 2s linear infinite;
+	    }
+	#processing {
+	      position: absolute;
+	      left: 50%;
+	      top: 50%;
+	      z-index: 1;
+	      margin: -75px 0 0 -75px;
+	      border: 50px solid #f3f3f3;
+	      border-radius: 50%;
+	      border-top: 50px solid  #4B57D2;
+	      width: 400px;
+	      height: 400px;
+	      -webkit-animation: spin 2s linear infinite;
+	      animation: spin 2s linear infinite;
 
-  }
-@-webkit-keyframes spin {
-    0% { -webkit-transform: rotate(0deg); }
-    100% { -webkit-transform: rotate(360deg); }
-    
-}
+	  }
+	@-webkit-keyframes spin {
+	    0% { -webkit-transform: rotate(0deg); }
+	    100% { -webkit-transform: rotate(360deg); }
+	
+	}
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-    
-}
-.upload{
-      background: #4B57D2;
-      border-radius: 6px;
-      /* z-index: 0; */
-      color: #FFFFFF;
-      font-size: 16px;
-      /* font-family: CeraGR-Medium; */
-      font-family: Arial, Helvetica, sans-serif;
-      letter-spacing: -0.03em;
-      /* font-feature-settings: 'tnum' on, 'lnum' on; */
-      line-height: 112%;
-      left:30px;
-      top:50px;
-      height: 42px;
-      
-      
-  }
- 
-    
+	@keyframes spin {
+	    0% { transform: rotate(0deg); }
+	    100% { transform: rotate(360deg); }
+	
+	}
+	.upload{
+	      background: #4B57D2;
+	      border-radius: 6px;
+	      color: #FFFFFF;
+	      font-size: 16px;
+	      font-family: Arial, Helvetica, sans-serif;
+	      letter-spacing: -0.03em;
+	      line-height: 112%;
+	      left:240px;
+	      top: 0%;
+		  /* margin-top: 200px; */
+	      height: 42px;
+	
+	
+	  }
 
-    
+	#uploadfile{
+		left: 20%;
+	    top: 55%;
+	    position: absolute;
+	    width: 111px;
+	    height: 42px;
+	}
+	  ul{
+		  padding-top: 20px;
+	  }
+	  li {
+	  float: left;
+	  list-style-type: none;
+	  display: block;
+	  color: #232323;
+	  padding: 14px 16px;
+	
+
+
+	}
+	a{
+	  padding-left: 14px;
+	  text-decoration: none;
+	  color: black;
+	  text-align: center;
+	
+	}
+	.nav{
+		padding-top: 0%;
+		margin-top: 5px;
+	}
+
+
+	.nav li.active {
+	    border-bottom: 3px solid #4B57D2;
+
+		text-align: center;
+		border-bottom-right-radius: 2px;
+		border-bottom-left-radius: 2px;
+		padding: 10px 16px;
+
+	}
+	.nav li.active a {
+	    color: #4B57D2;
+	}
+
+	.nav li:hover{
+		text-decoration: none;
+
+		/* background-color: red; */
+	}
+    .text-tab{
+		left: 20%;
+	    top: 48%;
+	    position: absolute;
+	    font-family: CeraGR-Regular;
+		font-size: 12px;
+		line-height: 14px;
+
+		color: #7A7A7A;
+	
+
+
+
+	}
+	.text-tab1{
+	    /* top: -100%; */
+		top: -60px;
+	    position: absolute;
+	    font-family: CeraGR-Regular;
+		font-size: 12px;
+		line-height: 14px;
+		width: 509px;
+
+		color: #7A7A7A;
+	}
   </style>
 
 </head>
@@ -171,25 +247,42 @@
 <div class="">
     
   <div class="row">
-    <!-- <form action = "/api"" method = "post" enctype="multipart/form-data">
-        <input type="file" name="file" />
-        <input type = "submit" value="Upload">
-    </form> -->
-    <div class="input-container">
-        <form id="form" action="{{ url_for('index_')}}" method="post">
-            <input class="form-control"   type="text" name="text" id="input" required>
-            <button type="submit" class="search"><i class="fa fa-search" style="color: #FFFFFF;padding-right: 5px;"></i><span style="padding-left: 10px;">Search</span></button>
-            <!-- <input type="submit" value="Search" class="search"> -->
-        </form>
 
-        <form id="uploadfile" action="{{ url_for('save_img')}}" method="post" enctype="multipart/form-data">
-          <input type="file" class="form-control-file border" name="file" id="" style="margin-top: 20px; position: absolute; margin-left: 50px;">
-          <button type="submit" class="upload" style="position:absolute;"><span style="padding-left: 2px;">Upload</span></button>
-        </form>
+    
+    <div class="input-container">
+
+        <form id="form" action="{{ url_for('index_')}}" method="post" class="tab-pane fade in active">
+			<div class="text-tab">
+				<p>Get insights about Covid-19 related keywords</p>
+			</div>
+            <input class="form-control"   type="text" name="text" id="input" required>
+			<button type="submit" class="search"><i class="fa fa-search" style="color: #FFFFFF;padding-right: 5px;"></i><span style="padding-left: 10px;">Search</span></button>
+			
+		</form>
+
+        
+
+		<form id="uploadfile" action="{{ url_for('save_img')}}" method="post" enctype="multipart/form-data"  class="tab-pane fade">
+			<div class="text-tab1">
+				<p>Upload document to enhance the data repository</p>
+			</div>
+			<div class="">
+				<input type="file" id="customFile" class="form-control-file border" name="file">
+		  		<!-- <label class="custom-file-label" for="customFile" >Select a file to upload</label> -->
+		  		<button type="submit" class="upload" style="position:absolute;"><span style="padding-left: 2px;">Upload</span></button>
+			</div>
+		</form>
    </div>
     <div class="col-md-5 first-col" style="background: #F5F8FF; height: 100vh; position:static;">
         <h4 class="search-text">What would you like to know about Covid-19?</h4>
         <h3 class="topic">Covid-19 Insight</h3>
+        <div class="nav" style="margin-left: 40%;">
+          <ul>
+            <li class="active"><a data-toggle="tab" href="#form">Search</a></li>
+            <li><a data-toggle="tab" href="#uploadfile">Upload</a></li>
+          </ul>
+          
+        </div>
 
     </div>
     <div class="col-md-7 girl" style="background-image: url({{url_for('static', filename='img/black-female-in-medical-mask-on-street.svg')}})">
