@@ -148,8 +148,8 @@
             // console.log(colors)
             var json= {% if filtered_result is defined %}{{ filtered_result|tojson }} {% endif %};
             // console.log(json)
-            var width = 1000,
-                height = 500
+            var width = 2000,
+                height = 800
             // console.log(data.nodes)
             var svg = d3.select(".viz").append("svg")
                 .attr("width", width)
