@@ -705,5 +705,5 @@ def save_img():
 
 if __name__ == "__main__":
     app.jinja_env.filters['split_space'] = split_space
-    app.run(host="0.0.0.0", port=8181, debug=True)
+    app.run(host="0.0.0.0", port=8181)
     
