@@ -264,7 +264,7 @@
                         .html(d.text ||  d.author_name || d.author_institution)
                         .style("left", (d3.mouse(this)[0]+700) + "px")
                         .style("top", (d3.mouse(this)[1]+700) + "px")
-                     document.getElementById("alert").style.display = "none";
+                     document.getElementById("alert").style.display = "block";
                      document.getElementById("display_text").style.display = "block";
                      document.getElementById('display_text').innerHTML = d.text || d.author_institution || d.author_name
                     }
