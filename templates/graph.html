@@ -253,7 +253,7 @@
                         .style("opacity", 1)
                     }
                     document.getElementById("display_text").style.display = "none";
-                    document.getElementByClassName("alert").style.display = "none";
+                    document.getElementsByClassName("alert").style.display = "none";
 
                     var mousemove = function(d) {
                         console.log("X", event.pageX - 600)
@@ -262,7 +262,7 @@
                         .html(d.text ||  d.author_name || d.author_institution)
                         .style("left", (d3.mouse(this)[0]+700) + "px")
                         .style("top", (d3.mouse(this)[1]+700) + "px")
-                     document.getElementByClassName("alert").style.display = "block";
+                     document.getElementsByClassName("alert").style.display = "block";
                      document.getElementById("display_text").style.display = "block";
                      document.getElementById('display_text').innerHTML = d.text || d.author_institution || d.author_name
                     }
